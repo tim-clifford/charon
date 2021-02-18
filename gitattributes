@@ -1,0 +1,11 @@
+*.sldasm merge=sldasm_merge
+*.SLDASM merge=sldasm_merge
+
+*.sldprt merge=sldasm_merge
+*.SLDPRT merge=sldasm_merge
+
+*.sldasm diff=sldasm_diff
+*.SLDASM diff=sldasm_diff
+
+*.sldprt diff=sldprt_diff
+*.SLDPRT diff=sldprt_diff

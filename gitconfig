@@ -4,6 +4,6 @@
 [diff "sldasm_diff"]
 	command = ./sldworks-git-tools/sldasm_diff.sh
 [merge "sldprt_merge"]
-	driver  = ./sldworks-git-tools/sldprt_mergetool.sh %O %A %B
+	driver  = ./sldworks-git-tools/sldprt_mergedriver.sh %O %A %B
 [merge "sldasm_merge"]
-	driver  = ./sldworks-git-tools/sldasm_mergetool.sh %O %A %B
+	driver  = ./sldworks-git-tools/sldasm_mergedriver.sh %O %A %B
