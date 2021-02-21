@@ -1,0 +1,105 @@
+' **************************************************
+' * SOLIDWORKS MACRO OF ETERNAL PAIN               *
+' * "I'M CRYING BLOOD" - H. FRANKS, SATISFIED USER *
+' **************************************************
+' vi: ft=basic
+
+Option Explicit
+
+' This is needed for the command line stuff
+' I've found that moving it breaks everything so... don't do that?
+Declare PtrSafe Function lstrcpyn_long_string Lib "kernel32" Alias "lstrcpynA" (ByVal DestString As String, ByVal SourcePointer As Long, ByVal MaxLen As Long) As Long
+Declare PtrSafe Function lstrlen_long Lib "kernel32" Alias "lstrlenA" (ByVal SourcePointer As Long) As Long
+Declare PtrSafe Function GetCommandLine_long Lib "kernel32" Alias "GetCommandLineA" () As Long
+
+' Entry point
+Sub main()
+
+    ' Declare all our objects here
+    ' Note that they're generic objects and not solidworks-specific types
+    ' This is due to something called 'late linking', which
+    '  we need if we want to keep the files in plaintext.
+    Dim Args()         As String
+    Dim swApp          As Object
+    Dim swUtil         As Object
+    Dim swUtilCompGeom As Object
+    Dim longStatus     As Long
+
+    ' Get Solidworks and the Utilites add-on (make sure that's installed)
+    Set swApp = CreateObject("SldWorks.Application")
+    Set swUtil = swApp.GetAddInObject("Utilities.UtilitiesApp")
+
+    ' Check if Utilities is disabled
+    If Not swUtil Is Nothing Then
+
+        ' This gets the solidworks compare interface, don't ask me how
+        Set swUtilCompGeom = swUtil.GetToolInterface(2, longStatus)
+
+        ' We split our args based on a somewhat arbitrary delimiter,
+        '  but notably one that cannot appear in any file paths
+        Args = Split(GetCommandLine, " /*")
+
+        ' Compare geometry and close the tool
+        ' You may think that leaving the tool open will give us a nice visual
+        '  diff like the when it's used manually. This is not the case.
+        longStatus = swUtilCompGeom.CompareGeometry(Args(1), Args(2), 0, 0, "")
+        CheckErr longStatus
+
+        longStatus = swUtilCompGeom.Close()
+        CheckErr longStatus
+
+    Else
+        MsgBox "Cannot open comparison - please make sure" _
+             + "Solidworks Utilities is enabled at startup"
+    End If
+
+End Sub
+
+
+Sub CheckErr(status)
+    ' Generic catch-all error message that will eventually
+    '  make its way to my inbox, whether I like it or not
+
+    ' Check if we have a nonzero error code
+    ' Also exclude status cude 15 - gtErrIncorrectReportPath
+    If status <> 0 And status <> 15 Then
+        MsgBox "Comparison failed with exit code " + Str(status) _
+             + ". Please open an issue at " _
+             + "https://github.com/tim-clifford/sldworks-git-tools"
+    End If
+End Sub
+
+' *****************************************************************************
+' * COMMAND LINE PARSER                                                       *
+' *****************************************************************************
+' * Reference: https://forum.solidworks.com/docs/DOC-3861                     *
+' *****************************************************************************
+
+Function GetCommandLine() As String
+  'Get a pointer to process commandline as Long
+  Dim ptrCommandLine As Long
+  ptrCommandLine = GetCommandLine_long
+  If ptrCommandLine > 0 Then 'GetCommandLine ok
+    Dim Buffer As String, BufferLength As Long
+    'Get a length of the command line using Long pointer
+    'Returns the length without the zero terminating char
+    BufferLength = lstrlen_long(ptrCommandLine)
+
+    If BufferLength > 0 Then
+      'Allocate a space for the command line
+      Buffer = Space(BufferLength + 1)
+
+      'Copy the command line to a buffer using Long + String pointers.
+      ptrCommandLine = lstrcpyn_long_string(Buffer, ptrCommandLine, BufferLength + 1)
+
+      'The copy SHOULD be OK. Zero means some error, not enough of space
+      If ptrCommandLine > 0 Then 'lstrcpyn
+        'Remove the zero terminator from the copied string
+        Dim PosZero As Long
+        PosZero = InStr(Buffer, Chr$(0))
+        If PosZero > 0 Then Buffer = Left(Buffer, PosZero - 1)
+        GetCommandLine = Buffer
+      End If 'If ptrCommandLine > 0 Then 'lstrcpyn
+    End If 'If BufferLength > 0 Then
+  End If 'If ptrCommandLine > 0 Then 'GetCommandLine ok
+End Function

@@ -6,10 +6,6 @@
 # |------|----------------------------|----------------------------|
 # |      |          left diff         |         right diff         |
 
-# TODO: some sort of macro thing
-# A macro can be invoked with e.g.
-#/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe /m sldworks-git-tools/compareasm.swp $1 $2
-
 # exit if the parts are identical
 if [ "$3" = "$6" ]; then
 	if ! [ "$4" = "$7" ]; then
@@ -26,8 +22,12 @@ right_filename="$(echo "$1" | sed 's/\(.*\)\.\([^.]*\)/\1_RIGHT\.\2/')"
 cp $2 $left_filename
 cp $5 $right_filename
 
-echo "Assemblies $left_filename and $right_filename differ."
-echo "You can use the compare feature in SolidWorks to see a diff."
-echo -n "Press enter to continue "
-read -p "(this will delete $left_filename and $right_filename)"
+echo "Opening SolidWorks to diff $left_filename and $right_filename..."
+echo "SolidWorks must exit fully before this diff can exit"
+
+/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe \
+	//m sldworks-git-tools/compare.swb \
+	/*$(realpath $left_filename | xargs cygpath -w) \
+	/*$(realpath $right_filename | xargs cygpath -w)
+
 rm $left_filename $right_filename
