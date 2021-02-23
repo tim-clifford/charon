@@ -1,11 +1,14 @@
 # SolidWorks Git Tools
-Provides integration with git diff and git merge for SolidWorks parts and
-assemblies. Add this repo as a submodule and then run
-`./sldworks-git-tools/setup_gitconfig.sh` from git bash.
+Provides integration with git for SolidWorks parts and assemblies. Add this
+repo as a submodule and then run `./sldworks-git-tools/setup.sh` from git bash.
 
-It's all functional now but requires the user to navigate a few SolidWorks
-menus on their own. An improvement would be to use SolidWorks VBA macros to
-streamline this.
+You will also need to enable *SOLIDWORKS Utilities* at startup, you can do this
+by navigating (in SolidWorks) to *Tools->Add-Ins* and checking the startup box
+next to *SOLIDWORKS Utilities*
 
-There are a lot of possible edge cases so it's possible I've missed one of
-them. Please open an issue if anything isn't working as expected.
+`git diff` is fully functional, `git merge` currently requires some unnecessary
+user intervention, but it's in the roadmap to make that fully functional too.
+
+There are a lot of possible edge cases so this is still a little rough around
+the edges. Please open an issue if anything isn't working quite as expected, or
+if there are ways that you think your workflow could be improved.
