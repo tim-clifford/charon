@@ -1,7 +1,5 @@
 # vi: set ft=gitconfig:
 [diff "sldworks_diff"]
 	command = ./sldworks-git-tools/sldworks_diff.sh
-[merge "sldprt_merge"]
-	driver  = ./sldworks-git-tools/sldprt_mergedriver.sh %O %A %B
-[merge "sldasm_merge"]
-	driver  = ./sldworks-git-tools/sldasm_mergedriver.sh %O %A %B
+[merge "sldworks_merge"]
+	driver  = ./sldworks-git-tools/sldworks_mergedriver.sh %O %A %B %P
