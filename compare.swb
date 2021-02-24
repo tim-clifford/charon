@@ -23,9 +23,25 @@ Option Explicit
 
 ' This is needed for the command line stuff
 ' I've found that moving it breaks everything so... don't do that?
-Declare PtrSafe Function lstrcpyn_long_string Lib "kernel32" Alias "lstrcpynA" (ByVal DestString As String, ByVal SourcePointer As Long, ByVal MaxLen As Long) As Long
-Declare PtrSafe Function lstrlen_long Lib "kernel32" Alias "lstrlenA" (ByVal SourcePointer As Long) As Long
-Declare PtrSafe Function GetCommandLine_long Lib "kernel32" Alias "GetCommandLineA" () As Long
+' Also, solidworks is REALLY funny about where we break lines here
+' In conclusion: don't touch
+Declare PtrSafe Function lstrcpyn_long_string _
+	Lib "kernel32" Alias "lstrcpynA" ( _
+		ByVal DestString    As String, _
+		ByVal SourcePointer As Long, _
+		ByVal MaxLen        As Long _
+	) _
+	As Long
+
+Declare PtrSafe Function lstrlen_long _
+	Lib "kernel32" Alias "lstrlenA" ( _
+		ByVal SourcePointer As Long _
+	) _
+	As Long
+
+Declare PtrSafe Function GetCommandLine_long _
+	Lib "kernel32" Alias "GetCommandLineA" () _
+	As Long
 
 ' Entry point
 Sub main()
