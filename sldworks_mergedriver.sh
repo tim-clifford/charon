@@ -24,6 +24,11 @@ while true; do
 			rm $local_filename
 			exit 0;;
 		"edit" )
+			if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]; then
+				echo "It does not appear that SolidWorks is installed"
+				echo "Please choose another option"
+				continue
+			fi
 			echo "Opening SolidWorks to merge $4..."
 			echo "SolidWorks must exit fully before this merge can continue"
 			echo "You can then choose a file to take, or abort"

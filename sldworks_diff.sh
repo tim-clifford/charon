@@ -16,6 +16,12 @@ if [ "$3" = "$6" ]; then
 	fi
 fi
 
+if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]; then
+	echo "It does not appear that SolidWorks is installed"
+	echo "Files $left_filename and $right_filename differ"
+	exit 1
+fi
+
 # move the files somewhere more understandable
 left_filename="$(echo "$1" | sed 's/\(.*\)\.\([^.]*\)/\1_LEFT\.\2/')"
 right_filename="$(echo "$1" | sed 's/\(.*\)\.\([^.]*\)/\1_RIGHT\.\2/')"
