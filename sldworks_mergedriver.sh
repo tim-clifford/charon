@@ -22,6 +22,13 @@ remote_filename="$(echo "$4" | sed 's/\(.*\)\.\([^.]*\)/\1_REMOTE\.\2/')"
 cp $2 $local_filename
 cp $3 $remote_filename
 
+# Delete all the files with message if a keyboard interrupt occurs
+trap "
+	echo ' Aborting merge...'
+	rm -f $1 $2 $3 $local_filename $remote_filename
+	exit 127
+" INT
+
 while true; do
 	echo "$4 conflicts. Choose one of the following options:"
 	echo "  local:  take the local  file (what you are merging into)"

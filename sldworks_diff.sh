@@ -32,17 +32,24 @@ if [ "$3" = "$6" ]; then
 	fi
 fi
 
-if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]; then
-	echo "It does not appear that SolidWorks is installed"
-	echo "Files $left_filename and $right_filename differ"
-	exit 1
-fi
-
 # move the files somewhere more understandable
 left_filename="$(echo "$1" | sed 's/\(.*\)\.\([^.]*\)/\1_LEFT\.\2/')"
 right_filename="$(echo "$1" | sed 's/\(.*\)\.\([^.]*\)/\1_RIGHT\.\2/')"
 cp $2 $left_filename
 cp $5 $right_filename
+
+# Delete the files with message if a keyboard interrupt occurs
+trap "
+	echo ' Aborting diff...'
+	rm $left_filename $right_filename
+	exit 127
+" INT
+
+if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]; then
+	echo "It does not appear that SolidWorks is installed"
+	echo "Files $left_filename and $right_filename differ"
+	exit 1
+fi
 
 echo "Opening SolidWorks to diff $left_filename and $right_filename..."
 echo "SolidWorks must exit fully before this diff can exit"
