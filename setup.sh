@@ -17,6 +17,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Yes yes yes some of this code is duplicated. Shell is hard, okay?
+
+# Set cat as the default pager so that we can more easily read/write text
+git config core.pager cat
+
 # Remove existing sld config if it exists and replace it with the latest config
 header_start="\
 ### --------------- BEGIN AUTO ADDED SOLIDWORKS TOOLS --------------------- ###\
