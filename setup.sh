@@ -41,10 +41,10 @@ $2" >> $4
 		# This is cursed, but at least it's not vba...
 		f="\
 $(grep -B9999 "$1" $4 | grep -v "$1")
-$(grep -A9999 "$2" $4 | grep -v "$2")
 $1
 $(cat "$3")
-$2"
+$2
+$(grep -A9999 "$2" $4 | grep -v "$2")"
 		# Can't oneline this because of order of operations
 		echo "$f" > $4
 	else
