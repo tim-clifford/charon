@@ -65,3 +65,8 @@ setup_config \
 	"$header_start" "$header_end" \
 	"sldworks-git-tools/gitattributes" \
 	".gitattributes"
+
+setup_config \
+	"$header_start" "$header_end" \
+	"sldworks-git-tools/gitignore" \
+	".gitignore"

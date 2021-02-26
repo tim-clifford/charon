@@ -1,0 +1,8 @@
+# Ignore SOLIDWORKS temp files
+~$*.sldprt
+~$*.SLDPRT
+~$*.sldasm
+~$*.SLDASM
+
+# Ignore macOS Desktop Services
+.DS_Store
