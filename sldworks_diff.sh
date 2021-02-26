@@ -47,11 +47,11 @@ trap "
 
 if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]; then
 	echo "It does not appear that SolidWorks is installed"
-	echo "Files $left_filename and $right_filename differ"
+	echo "File $1 differs"
 	exit 1
 fi
 
-echo "Opening SolidWorks to diff $left_filename and $right_filename..."
+echo "Opening SolidWorks to diff $1..."
 echo "SolidWorks must exit fully before this diff can exit"
 
 /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe \

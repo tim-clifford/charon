@@ -46,7 +46,8 @@ while true; do
 			rm $local_filename
 			exit 0;;
 		"edit" )
-			if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]; then
+			if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]
+			then
 				echo "It does not appear that SolidWorks is installed"
 				echo "Please choose another option"
 				continue
