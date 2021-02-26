@@ -40,8 +40,8 @@ $2" >> $4
 		echo "Found existing solidworks config in $4, replacing..."
 		# This is cursed, but at least it's not vba...
 		f="\
-$(cat $4|grep -B9999 "$1"|grep -v "$1")
-$(cat $4|grep -A9999 "$2"|grep -v "$2")
+$(grep -B9999 "$1" $4 | grep -v "$1")
+$(grep -A9999 "$2" $4 | grep -v "$2")
 $1
 $(cat "$3")
 $2"
