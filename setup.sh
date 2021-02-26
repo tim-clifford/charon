@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# Yes yes yes some of this code is duplicated. Shell is hard, okay?
-
 # Set cat as the default pager so that we can more easily read/write text
 git config core.pager cat
 
@@ -28,59 +26,42 @@ header_start="\
 header_end="\
 ### ---------------- END AUTO ADDED SOLIDWORKS TOOLS ---------------------- ###\
 "
-if cat .git/config | grep -q "$header_start"; then
-	echo "Found existing solidworks config, replacing..."
-	# This is cursed, can't indent properly without introducing an indent into
-	# the config file. If you're thinking of a way to, I've probably tried it.
-	# At least it's not vba...
 
-	gitconfig="\
-$(cat .git/config|grep -B9999 "$header_start"|grep -v "$header_start")
-$(cat .git/config|grep -A9999 "$header_end"  |grep -v "$header_end")
-$header_start
-$(cat sldworks-git-tools/gitconfig)
-$header_end"
+setup_config() { # args (header_start, header_end, file to add, file to add to)
 
-	# Can't oneline this because of order of operations
-	echo "$gitconfig" > .git/config
+	if ! [ -f $4 ]; then
+		# Thanks, I hate it
+		echo "\
+$1
+$(cat "$3")
+$2" >> $4
 
-else
-	# Thanks, I hate it
-	echo "\
-$header_start
-$(cat sldworks-git-tools/gitconfig)
-$header_end" >> .git/config
+	elif cat $4 | grep -q "$1"; then
+		echo "Found existing solidworks config in $4, replacing..."
+		# This is cursed, but at least it's not vba...
+		f="\
+$(cat $4|grep -B9999 "$1"|grep -v "$1")
+$(cat $4|grep -A9999 "$2"|grep -v "$2")
+$1
+$(cat "$3")
+$2"
+		# Can't oneline this because of order of operations
+		echo "$f" > $4
+	else
+		# Thanks, I hate it
+		echo "\
+$1
+$(cat "$3")
+$2" >> $4
+	fi
+}
 
-fi
+setup_config \
+	"$header_start" "$header_end" \
+	"sldworks-git-tools/gitconfig" \
+	".git/config"
 
-if ! [ -f .gitattributes ]; then
-	# Thanks, I hate it
-	echo "\
-$header_start
-$(cat sldworks-git-tools/gitattributes)
-$header_end" >> .gitattributes
-
-elif cat .gitattributes | grep -q "$header_start"; then
-	echo "Found existing solidworks attibutes, replacing..."
-	# This is cursed, can't indent properly without introducing an indent into
-	# the config file. If you're thinking of a way to, I've probably tried it.
-	# At least it's not vba...
-
-	gitattributes="\
-$(cat .gitattributes|grep -B9999 "$header_start"|grep -v "$header_start")
-$(cat .gitattributes|grep -A9999 "$header_end"  |grep -v "$header_end")
-$header_start
-$(cat sldworks-git-tools/gitattributes)
-$header_end"
-
-	# Can't oneline this because of order of operations
-	echo "$gitattributes" > .gitattributes
-
-else
-	# Thanks, I hate it
-	echo "\
-$header_start
-$(cat sldworks-git-tools/gitattributes)
-$header_end" >> .gitattributes
-
-fi
+setup_config \
+	"$header_start" "$header_end" \
+	"sldworks-git-tools/gitattributes" \
+	".gitattributes"
