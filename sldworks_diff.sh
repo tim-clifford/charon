@@ -22,6 +22,9 @@
 # |------|----------------------------|----------------------------|
 # |      |          left diff         |         right diff         |
 
+# SolidWorks install location, may want to add some logic to set this later
+sw_install_loc="/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe"
+
 # exit if the parts are identical
 if [ "$3" = "$6" ]; then
 	if ! [ "$4" = "$7" ]; then
@@ -54,7 +57,7 @@ fi
 echo "Opening SolidWorks to diff $1..."
 echo "SolidWorks must exit fully before this diff can exit"
 
-/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe \
+$sw_install_loc \
 	//m sldworks-git-tools/compare.swb \
 	/*$(realpath $left_filename | xargs cygpath -w) \
 	/*$(realpath $right_filename | xargs cygpath -w)

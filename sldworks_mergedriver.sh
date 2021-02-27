@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # executed by git: with arguments $1: BASE, $2: LOCAL, $3: REMOTE $4: filename
 
+# SolidWorks install location, may want to add some logic to set this later
+sw_install_loc="/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe"
+
 # make the filenames human-readable.
 local_filename="$(echo  "$4" | sed 's/\(.*\)\.\([^.]*\)/\1_LOCAL\.\2/')"
 remote_filename="$(echo "$4" | sed 's/\(.*\)\.\([^.]*\)/\1_REMOTE\.\2/')"
@@ -46,7 +49,7 @@ while true; do
 			rm $local_filename
 			exit 0;;
 		"edit" )
-			if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]
+			if ! [ -f $sw_install_loc ]
 			then
 				echo "It does not appear that SolidWorks is installed"
 				echo "Please choose another option"
@@ -55,7 +58,7 @@ while true; do
 			echo "Opening SolidWorks to merge $4..."
 			echo "SolidWorks must exit fully before this merge can continue"
 			echo "You can then choose a file to take, or abort"
-			/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe \
+			$sw_install_loc \
 				//m sldworks-git-tools/compare.swb \
 				/*$(realpath $local_filename | xargs cygpath -w) \
 				/*$(realpath $remote_filename | xargs cygpath -w)
