@@ -1,5 +1,6 @@
-# SolidWorks Git Tools
-Provides integration with git for SolidWorks parts and assemblies.
+# Charon
+The ferryman to Hell (aka CAD version control). Provides integration with git
+for SolidWorks parts and assemblies.
 
 Don't be fooled by the name on the repo or the number of commits,
 @henryefranks has made more impressive contributions to this project than I
