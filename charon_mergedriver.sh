@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# SolidWorks Git Tools
+# Charon
 # Copyright (C) 2021 Tim Clifford, Henry Franks
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,10 +14,24 @@
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # executed by git: with arguments $1: BASE, $2: LOCAL, $3: REMOTE $4: filename
 
-# SolidWorks install location, may want to add some logic to set this later
-sw_install_loc="/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe"
+# check filetype
+case $@ in
+	*sldprt) ;&
+	*SLDPRT) ;&
+	*sldasm) ;&
+	*SLDASM)
+		driver="$(dirname $(realpath $0))/solidworks_driver.sh"
+		prog_name="SolidWorks"
+		;;
+	*)
+		echo "Unsupported filetype for Charon"
+		;;
+esac
+
 
 # make the filenames human-readable.
 local_filename="$(echo  "$4" | sed 's/\(.*\)\.\([^.]*\)/\1_LOCAL\.\2/')"
@@ -36,7 +50,7 @@ while true; do
 	echo "$4 conflicts. Choose one of the following options:"
 	echo "  local:  take the local  file (what you are merging into)"
 	echo "  remote: take the remote file (what you are merging)"
-	echo "  edit:   open the files in SolidWorks to edit manually"
+	echo "  edit:   open the files in $prog_name to edit manually"
 	echo "  abort:  abort the merge resolution"
 	read -p "Enter your choice: " choice
 	case "$choice" in
@@ -49,19 +63,11 @@ while true; do
 			rm $local_filename
 			exit 0;;
 		"edit" )
-			if ! [ -f $sw_install_loc ]
-			then
-				echo "It does not appear that SolidWorks is installed"
-				echo "Please choose another option"
-				continue
-			fi
-			echo "Opening SolidWorks to merge $4..."
-			echo "SolidWorks must exit fully before this merge can continue"
+			# The driver will check health etc
+			echo "Opening $prog_name to merge $4..."
+			echo "$prog_name must exit fully before this merge can continue"
 			echo "You can then choose a file to take, or abort"
-			$sw_install_loc \
-				//m sldworks-git-tools/compare.swb \
-				/*$(realpath $local_filename | xargs cygpath -w) \
-				/*$(realpath $remote_filename | xargs cygpath -w)
+			$driver "$local_filename" "$remote_filename"
 			;;
 		"abort" )
 			rm $local_filename

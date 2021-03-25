@@ -1,11 +1,11 @@
-*.sldasm merge=sldworks_merge
-*.SLDASM merge=sldworks_merge
+*.sldasm merge=charon_merge
+*.SLDASM merge=charon_merge
 
-*.sldprt merge=sldworks_merge
-*.SLDPRT merge=sldworks_merge
+*.sldprt merge=charon_merge
+*.SLDPRT merge=charon_merge
 
-*.sldasm diff=sldworks_diff
-*.SLDASM diff=sldworks_diff
+*.sldasm diff=charon_diff
+*.SLDASM diff=charon_diff
 
-*.sldprt diff=sldworks_diff
-*.SLDPRT diff=sldworks_diff
+*.sldprt diff=charon_diff
+*.SLDPRT diff=charon_diff

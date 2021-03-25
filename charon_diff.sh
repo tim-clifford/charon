@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# SolidWorks Git Tools
+# Charon
 # Copyright (C) 2021 Tim Clifford, Henry Franks
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,19 @@
 # |------|----------------------------|----------------------------|
 # |      |          left diff         |         right diff         |
 
-# SolidWorks install location, may want to add some logic to set this later
-sw_install_loc="/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe"
+# check filetype
+case $1 in
+	*sldprt) ;&
+	*SLDPRT) ;&
+	*sldasm) ;&
+	*SLDASM)
+		driver="$(dirname $(realpath $0))/solidworks_driver.sh"
+		prog_name="SolidWorks"
+		;;
+	*)
+		echo "Unsupported filetype for Charon"
+		;;
+esac
 
 # exit if the parts are identical
 if [ "$3" = "$6" ]; then
@@ -48,18 +59,14 @@ trap "
 	exit 127
 " INT
 
-if ! [ -f /c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe ]; then
-	echo "It does not appear that SolidWorks is installed"
+echo "Opening $prog_name to diff $1..."
+echo "$prog_name must exit fully before this diff can exit"
+
+# The driver will check health etc
+if ! $driver $left_filename $right_filename; then
 	echo "File $1 differs"
+	rm $left_filename $right_filename
 	exit 1
 fi
-
-echo "Opening SolidWorks to diff $1..."
-echo "SolidWorks must exit fully before this diff can exit"
-
-$sw_install_loc \
-	//m sldworks-git-tools/compare.swb \
-	/*$(realpath $left_filename | xargs cygpath -w) \
-	/*$(realpath $right_filename | xargs cygpath -w)
 
 rm $left_filename $right_filename

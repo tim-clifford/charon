@@ -58,15 +58,15 @@ $2" >> $4
 
 setup_config \
 	"$header_start" "$header_end" \
-	"sldworks-git-tools/gitconfig" \
+	"charon/gitconfig" \
 	".git/config"
 
 setup_config \
 	"$header_start" "$header_end" \
-	"sldworks-git-tools/gitattributes" \
+	"charon/gitattributes" \
 	".gitattributes"
 
 setup_config \
 	"$header_start" "$header_end" \
-	"sldworks-git-tools/gitignore" \
+	"charon/gitignore" \
 	".gitignore"

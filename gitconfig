@@ -1,5 +1,5 @@
 # vi: set ft=gitconfig:
-[diff "sldworks_diff"]
-	command = ./sldworks-git-tools/sldworks_diff.sh
-[merge "sldworks_merge"]
-	driver  = ./sldworks-git-tools/sldworks_mergedriver.sh %O %A %B %P
+[diff "charon_diff"]
+	command = ./charon/charon_diff.sh
+[merge "charon_merge"]
+	driver  = ./charon/charon_mergedriver.sh %O %A %B %P
