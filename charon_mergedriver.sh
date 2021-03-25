@@ -64,10 +64,12 @@ while true; do
 			exit 0;;
 		"edit" )
 			# The driver will check health etc
-			echo "Opening $prog_name to merge $4..."
-			echo "$prog_name must exit fully before this merge can continue"
-			echo "You can then choose a file to take, or abort"
-			$driver "$local_filename" "$remote_filename"
+			if $driver --check-health; then
+				echo "Opening $prog_name to merge $4..."
+				echo "$prog_name must exit fully before this merge can continue"
+				echo "You can then choose a file to take, or abort"
+				$driver $local_filename $remote_filename
+			fi
 			;;
 		"abort" )
 			rm $local_filename

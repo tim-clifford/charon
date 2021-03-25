@@ -59,14 +59,12 @@ trap "
 	exit 127
 " INT
 
-echo "Opening $prog_name to diff $1..."
-echo "$prog_name must exit fully before this diff can exit"
-
-# The driver will check health etc
-if ! $driver $left_filename $right_filename; then
+if ! $driver --check-health; then
 	echo "File $1 differs"
-	rm $left_filename $right_filename
-	exit 1
+else
+	echo "Opening $prog_name to diff $1..."
+	echo "$prog_name must exit fully before this diff can exit"
+	$driver $left_filename $right_filename
 fi
 
 rm $left_filename $right_filename

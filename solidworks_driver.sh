@@ -27,7 +27,7 @@ Usage: $0 [OPTION]... FILE1 FILE2
 Opens a comparison between the two files in SolidWorks.
 
   -h, --help            display this help and exit
-  -c, --check-vm        check if a virtual machine is accessible
+  -c, --check-health    check if a virtual machine is accessible
 
 If you are using a VM, this will make some assumptions
 (which are the defaults of solidworks-vm)
@@ -96,7 +96,7 @@ for i in "$@"; do
 					usage
 					exit 0
 					;;
-				-c | --check-vm)
+				-c | --check-health)
 					check_vm
 					exit 0
 					;;
