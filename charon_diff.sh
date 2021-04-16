@@ -33,6 +33,7 @@ case $1 in
 		;;
 	*)
 		echo "Unsupported filetype for Charon"
+		exit 1
 		;;
 esac
 
