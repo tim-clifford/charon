@@ -146,7 +146,7 @@ Function CheckErr(status) as Boolean
 	If status <> 0 And status <> 15 Then
 		MsgBox "Comparison failed with exit code " + Str(status) _
 			+ ". Please open an issue at " _
-			+ "https://github.com/tim-clifford/charon"
+			+ "https://github.com/smh-my-head/charon"
 		CheckErr = True ' Assign return value
 	End If
 
