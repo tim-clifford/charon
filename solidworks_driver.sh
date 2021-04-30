@@ -167,17 +167,36 @@ case "$(uname)" in
 esac
 
 if $ssh_required; then
-	# note that MSYS2 replaces - with /
-	# (and / with /c/msys2/ or wherever it's installed)
+	# note that MSYS2 approximately replaces - with /, / with \, and
+	# / with /c/msys2/ or wherever it's installed
+
+	# Windows is completely fucking stupid, and the arguments can get too long
+	# if we don't write to a temporary batch file -- TC
+
+	# Create a temp file in $HOME and then replace $HOME with //10.0.2.4/qemu
+	# for the guest. Note batfile is on the host filesystem due to free space
+	# constraints
+
+	batfile_host="$(mktemp --suffix='.bat' --tmpdir="$HOME")"
+	batfile_guest="$(echo "$batfile_host" | sed "s|$HOME|//10.0.2.4/qemu|")"
+	chmod +x $batfile_host
+
+	echo "\"C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\SLDWORKS.exe\" \
+				/m $macro_filename /*$left_filename /*$right_filename" \
+		> $batfile_host
+
 	sshpass -p 'a' ssh -p 6969 archuser@localhost "\
-		schtasks -create -f -tn CharonSolidWorks -tr \
-			'C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\SLDWORKS.exe \
-				/m $macro_filename /*$left_filename /*$right_filename' \
+		schtasks -create -f -tn CharonSolidWorks -tr '$batfile_guest' \
 			-sc ONCE -st 00:00
 		schtasks -run -tn CharonSolidWorks"
+
 	read -p "Press Enter to kill SolidWorks and continue"
 	sshpass -p 'a' ssh -p 6969 archuser@localhost "\
 		schtasks -end -tn CharonSolidWorks"
+
+	# cleanup batch file
+	rm $batfile_host
+
 else
 	/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe \
 		//m sldworks-git-tools/compare.swb \
