@@ -28,7 +28,7 @@ Usage: $0 [OPTION]... FILE1 FILE2
 Opens a comparison between the two files in SolidWorks.
 
   -h, --help            display this help and exit
-  -c, --check-health    check if a virtual machine is accessible
+  -c, --check-vm        check if a virtual machine satisfies the preconditions
 
 If you are using a VM, this will make some assumptions
 (which are the defaults of hades)
@@ -43,6 +43,9 @@ EOF
 }
 
 check_vm() {
+	# Check if there is a VM and it satisfies the conditions Charon
+	# requires
+
 	# check vm is running
 	if ! pgrep qemu >/dev/null 2>&1; then
 		echo "No virtual machine running"
@@ -90,7 +93,7 @@ for i in "$@"; do
 					usage
 					exit 0
 					;;
-				-c | --check-health)
+				-c | --check-vm)
 					check_vm
 					exit 0
 					;;

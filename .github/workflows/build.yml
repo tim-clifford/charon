@@ -1,0 +1,35 @@
+name: Charon Build
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get proprietary assets
+        env:
+          KEY: "${{ secrets.DEPLOY_KEY }}"
+        run: |
+          echo "$KEY" > ~/.ssh/id_ed25519
+          git clone https://github.com/smh-my-head/charon-build-assets
+          mkdir -p $GITHUB_WORKSPACE/compare/build
+          cp charon-build-assets/* $GITHUB_WORKSPACE/compare/build
+
+      - name: Build
+        run: |
+          cd $GITHUB_WORKSPACE/compare
+          dotnet publish -r win-x64 -o build --nologo \
+              --configuration "Release" /p:PublishSingleFile=true \
+              /p:IncludeNativeLibrariesForSelfExtract=true
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            $GITHUB_WORKSPACE/compare/build/compare.exe

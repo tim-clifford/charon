@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
-using SolidWorks.Interop.gtswutilities;
 using static Marshal2;
 
 namespace Charon
@@ -17,8 +16,7 @@ namespace Charon
 
 			try {
 				var progId = "SldWorks.Application";
-				swApp = Marshal2.GetActiveObject(progId)
-					as SolidWorks.Interop.sldworks.ISldWorks;
+				swApp = Marshal2.GetActiveObject(progId) as ISldWorks;
 			} catch (COMException e) {
 				swApp = new SldWorks();
 				swApp.Visible = true;

@@ -1,3 +1,4 @@
 /test
-/bin
-/obj
+/compare/bin
+/compare/obj
+/compare/build
