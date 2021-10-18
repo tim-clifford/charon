@@ -20,6 +20,7 @@
 
 # attempt to determine the OS and type of file path
 
+BASE_DIR="$(dirname "$(realpath $0)")"
 
 usage() {
 	cat << EOF
@@ -30,14 +31,13 @@ Opens a comparison between the two files in SolidWorks.
   -c, --check-health    check if a virtual machine is accessible
 
 If you are using a VM, this will make some assumptions
-(which are the defaults of solidworks-vm)
+(which are the defaults of hades)
 
 1. if you are using qemu and require the vm to access the host, there is a
    network drive at //10.0.2.4/qemu which mounts $HOME
 2. If you require ssh access to the guest, MSYS2 is accessible at
-   archuser@localhost:6969
-3. The password of the guest is 'a'. (This should not be a security issue, as
-   no ports on the guest should be exposed)
+   hades@localhost:2200
+3. The keys for the guest are at keys/hades and keys/hades.pub
 
 EOF
 }
@@ -49,20 +49,14 @@ check_vm() {
 		exit 1
 	fi
 
-	# check we have sshpass
-	if ! sshpass -h >/dev/null 2>&1; then
-		echo "sshpass is required for scripting ssh, please install it"
-		exit 1
-	fi
-
 	# check vm is accessible over ssh
-	if ! sshpass -p 'a' ssh -p 6969 archuser@localhost 'exit 0'; then
+	if ! ssh -p 2200 hades@localhost -i $BASE_DIR/keys/hades 'exit 0'; then
 		echo "Cannot access VM over ssh"
 		exit 1
 	fi
 
 	# check vm has mounted host
-	if ! sshpass -p 'a' ssh -p 6969 archuser@localhost \
+	if ! ssh -p 2200 hades@localhost -i $BASE_DIR/keys/hades \
 			'ls //10.0.2.4/qemu >/dev/null'
 	then
 		echo "VM does not appear to have mounted the host on //10.0.2.4/qemu"
@@ -78,7 +72,7 @@ check_vm() {
 		echo    "when using it on Linux"
 		exit 1
 	fi
-	if ! sshpass -p 'a' ssh -p 6969 archuser@localhost \
+	if ! ssh -p 2200 hades@localhost -i $BASE_DIR/keys/hades \
 		ls "$(echo $fpath | sed "s|$HOME|//10.0.2.4/qemu|")" >/dev/null
 	then
 		echo "VM does not appear to have mounted the host at $HOME"
@@ -150,7 +144,7 @@ case "$(uname)" in
 				| sed "s|^$HOME|//10.0.2.4/qemu|;s|/|\\\\|g")"
 		right_filename="$(echo "$(realpath "$right_filename")" \
 				| sed "s|^$HOME|//10.0.2.4/qemu|;s|/|\\\\|g")"
-		macro_filename="$(echo "$(realpath "charon/compare.swb")" \
+		comp_filename="$(echo "$(realpath "$BASE_DIR/charon/compare.exe")" \
 				| sed "s|^$HOME|//10.0.2.4/qemu|;s|/|\\\\|g")"
 		;;
 
@@ -162,25 +156,19 @@ case "$(uname)" in
 		# assume the files are already a path accessible to windows
 		left_filename="$( realpath $left_filename  | xargs cygpath -w)"
 		right_filename="$(realpath $right_filename | xargs cygpath -w)"
-		macro_filename="charon/compare.swb"
+		comp_filename="$( realpath "$BASE_DIR\\charon\\compare.exe" \
+			| xargs cygpath -w)"
 		;;
 esac
 
 if $ssh_required; then
 	# note that MSYS2 replaces - with /
 	# (and / with /c/msys2/ or wherever it's installed)
-	sshpass -p 'a' ssh -p 6969 archuser@localhost "\
+	ssh -p 2200 hades@localhost -i $BASE_DIR/keys/hades "\
 		schtasks -create -f -tn CharonSolidWorks -tr \
-			'C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\SLDWORKS.exe \
-				/m $macro_filename /*$left_filename /*$right_filename' \
+			'$comp_filename $left_filename $right_filename' \
 			-sc ONCE -st 00:00
 		schtasks -run -tn CharonSolidWorks"
-	read -p "Press Enter to kill SolidWorks and continue"
-	sshpass -p 'a' ssh -p 6969 archuser@localhost "\
-		schtasks -end -tn CharonSolidWorks"
 else
-	/c/Program\ Files/SOLIDWORKS\ Corp/SOLIDWORKS/SLDWORKS.exe \
-		//m sldworks-git-tools/compare.swb \
-		/*$left_filename \
-		/*$right_filename
+	$comp_filename $left_filename $right_filename
 fi

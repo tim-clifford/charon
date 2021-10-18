@@ -1,5 +1,0 @@
-set swapp = CreateObject("SldWorks.Application")
-
-swapp.ExitApp()
-
-set swapp = CreateObject("SldWorks.Application")
